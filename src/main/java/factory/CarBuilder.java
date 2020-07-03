@@ -33,6 +33,10 @@ public class CarBuilder {
         Arrays.fill(statuses, WorkerStatus.SLEEPING);
     }
 
+    public void addCarStorageObserver(Observer o){
+        carStorage.addObserver(o);
+    }
+
     public void buildCar() {
         workers.addTask(new WorkerTask(this));
     }

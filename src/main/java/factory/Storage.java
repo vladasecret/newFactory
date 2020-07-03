@@ -2,7 +2,7 @@ package factory;
 
 import java.util.ArrayList;
 
-public class Storage<T> {
+public class Storage<T> extends Observable {
     private final ArrayList<T> units;
     private final int capacity;
 
@@ -16,6 +16,7 @@ public class Storage<T> {
             wait();
         }
         units.add(detail);
+        changed();
         notifyAll();
     }
 
@@ -24,6 +25,7 @@ public class Storage<T> {
             wait();
         }
         T detail = units.remove(units.size() - 1);
+        changed();
         notifyAll();
         return detail;
     }

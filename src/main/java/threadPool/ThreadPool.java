@@ -25,9 +25,6 @@ public class ThreadPool  {
     public void stop() throws InterruptedException {
         for (PooledThread thread : availableThreads){
             thread.interrupt();
-//            if (!thread.isInterrupted()){
-//                thread.interrupt();
-//            }
         }
         join();
     }

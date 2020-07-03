@@ -41,9 +41,6 @@ public class Factory {
         enginesSupplier = new Supplier<>(enginesStorage, __DEFAULT_SPEED, Engine.class);
         bodiesSupplier = new Supplier<>(bodiesStorage, __DEFAULT_SPEED, Body.class);
 
-        carBuilder = new CarBuilder(factoryConfig.getWorkersCount(), enginesStorage, bodiesStorage, accessoriesStorage, carsStorage);
-        controller = new CarBuilderController(carBuilder);
-
         dealers = new ArrayList<>();
         for (int i = 0; i < factoryConfig.getDealers(); i++) {
             dealers.add(new Dealer(carsStorage, __DEFAULT_SPEED, factoryConfig.doLogSales()));
@@ -59,29 +56,22 @@ public class Factory {
 
         int count = 0;
         for (var dealer : dealers) {
-            threads.add(new Thread(dealer, "dealer" + String.valueOf(count++)));
+            threads.add(new Thread(dealer, String.valueOf(count++)));
         }
 
-        threads.add(new Thread(controller, "controller"){
-            @Override
-            public void interrupt() {
-                try {
-                    controller.stop();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                super.interrupt();
-            }
-        });
+        carBuilder = new CarBuilder(factoryConfig.getWorkersCount(), enginesStorage, bodiesStorage, accessoriesStorage, carsStorage);
+        controller = new CarBuilderController(carBuilder);
     }
 
     public void start() {
         for (var thread : threads) {
             thread.start();
         }
+        controller.start();
     }
 
     public void stop() throws InterruptedException {
+        controller.stop();
         for (var thread : threads) {
             thread.interrupt();
         }
